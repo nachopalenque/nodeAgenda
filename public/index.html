@@ -11,6 +11,9 @@
             background-color: #f4f7fa;
             font-family: 'Arial', sans-serif;
         }
+        del{
+            color: #c82333;
+        }
 
         header {
             background-color: #343a40;
@@ -204,7 +207,7 @@
                     <th>Nombre</th>
                     <th>Descripción</th>
                     <th>Nota/Tarea</th>
-                    <th>Estado</th>
+                    <th>Terminada</th>
                     <th>Acción</th>
                 </tr>
             </thead>
@@ -369,12 +372,27 @@
             for(tarea of data){
 
             const fila = document.createElement("tr")
+
+            if(tarea.terminada){
+
+            fila.innerHTML=`
+            <td hidden>${tarea._id}</td>
+            <td><del>${tarea.nombre}</del></td>
+            <td><del>${tarea.descripcion}</del></td>
+            <td><del>${(tarea.tarea_nota)? "Nota":"Tarea"}</del></td>
+            <td><del>${(tarea.terminada)? "Si":"No"}</del></td>`
+
+            }else{
+
             fila.innerHTML=`
             <td hidden>${tarea._id}</td>
             <td>${tarea.nombre}</td>
             <td>${tarea.descripcion}</td>
             <td>${(tarea.tarea_nota)? "Nota":"Tarea"}</td>
             <td>${(tarea.terminada)? "Si":"No"}</td>`
+                
+            }
+ 
             let tdBoton = document.createElement("td")
             let botonVer= document.createElement("button")
             botonVer.textContent = "Ver Tarea"
