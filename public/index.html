@@ -318,19 +318,9 @@
 
     })
 
-    document.getElementById("eliminarTarea").addEventListener("click",()=>{
-        fetch(`/items/${idTarea}`, {
-         method: 'DELETE',
-         headers: {
-             'Content-Type': 'application/json'  // Necesario para enviar JSON
-         },
-     })
-     .then(response => (response.ok)? console.log("Elemento eliminado correctamente"):console.log("El elmento no se ha podido eliminar"))  // Supongo que la respuesta es un JSON con el producto eliminado
-  
-     .catch(error => console.error('Error al eliminar el item: ', error));
-     
+    document.getElementById("eliminarTarea").addEventListener("click",  ()=>{
+        eliminarNotaTarea(idTarea);
     })
-
 
 
 
@@ -369,10 +359,10 @@
             const tbody = table.querySelector("tbody");
             tbody.innerHTML="";
 
-            for(tarea of data){
+            for(let tarea of data){
 
             const fila = document.createElement("tr")
-
+            fila.id = tarea._id
             if(tarea.terminada){
 
             fila.innerHTML=`
@@ -395,12 +385,22 @@
  
             let tdBoton = document.createElement("td")
             let botonVer= document.createElement("button")
+         
             botonVer.textContent = "Ver Tarea"
             fila.appendChild(tdBoton)
             tdBoton.appendChild(botonVer)
             botonVer.addEventListener("click",()=>{
                 verNotaTarea(tarea._id,tarea.nombre,tarea.descripcion,tarea.tarea_nota, tarea.terminada)
             })
+
+            if(tarea.nota_tarea == 1){
+                let botonCambiarEstado = document.createElement("button")
+                (tarea.terminada==1)? botonCambiarEstado.textContent = "Reanudar Tarea":botonCambiarEstado.textContent="Terminar Tarea"
+                tdBoton.appendChild(botonCambiarEstado)
+                botonCambiarEstado.addEventListener("click",()=>{
+                    
+                })
+            }
 
             tbody.appendChild(fila);
 
@@ -424,6 +424,25 @@
         document.getElementById("descripcionTareaEditar").value = descripcion;
         (tarea_nota == 0)?document.getElementById("terminarTarea").hidden = false : document.getElementById("terminarTarea").hidden = true;
 
+    }
+
+    function eliminarNotaTarea(id){
+        if(confirm("¿Esta seguro?")){
+            fetch("/items/"+id,{
+            method:"DELETE"
+        })
+        .then(response =>{
+
+            if(response.ok){
+                alert("item eliminado")
+                document.getElementById(id).remove
+            }else{
+                alert("error al eliminar")
+            }
+        
+        })
+
+    }
     }
 
 </script>

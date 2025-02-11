@@ -186,17 +186,24 @@ const actualizarDescripcionTarea = (idItem, descripcionTarea)=>{
   throw err;
 }      
 
+
+
 const borrarTarea = (idItemDelete)=>{
-    Item.findByIdAndDelete(idItemDelete)
-  .then(itemDelete => {
-    if (itemDelete) {
-      console.log('item eliminado:', itemDelete);
-    } else {
-      console.log('No se encontró ningún item con ese ID.');
-    }
-  })
-  .catch(err => console.error('Error al eliminar el item:', err));
+  return Item.findByIdAndDelete(idItemDelete)
+ .then(itemDelete => {
+   if (itemDelete) {
+     console.log('Item eliminado:', itemDelete);
+     return itemDelete
+   } else {
+     console.log('No se encontró ningún item con ese ID.');
+     return null
+   }
+ })
+ .catch(err => console.error('Error al eliminar el item:', err))
+ throw err;
 
 }
+
+
 
      module.exports = {crearNuevoItem,Item,buscarPrimero, buscarPorNombre, buscarTodos,buscarPorId, buscarTerminadas, actualizarNombreTarea,actualizarDescripcionTarea, actualizarEstadoTarea, borrarTarea}
