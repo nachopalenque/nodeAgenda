@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
-mongoose.connect(process.env.Database_URL)
-  .then(() => console.log('Connected!'));
 
   const itemSchema = new mongoose.Schema({
     nombre:String,

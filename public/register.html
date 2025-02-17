@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <main>
+        <section>
+            <form>
+                <label for="name" id="name">Nombre de usuario: </label><br>
+                <input type="text" name="name"  id="name" placeholder="Introduzca el nombre de usuario" required><br>
+                <label for="email" name="email" id="email">Email: </label><br>
+                <input type="email" name="email" id="email" placeholder="Introduzca el email para realizar el inicio de sesión"><br>
+                <label for="password" id="password">Contraseña del usuario: </label><br>
+                <input type="password" id="password" name="password" placeholder="Introduzca la contraseña"><br>
+                <button id="registrar">Registrar</button> <button id="reset">Limpiar Datos</button>
+            </form>
+
+
+
+        </section>
+
+
+    </main>
+</body>
+<script>
+
+document.getElementById("registrar").addEventListener("click",crearElemento)
+function crearElemento(){
+          // Crear el objeto con lterminar crud mongo tareas	os datos que quieres insertar
+     const nuevoRegistro = {
+         name: document.getElementById("name").value,
+         email: document.getElementById("email").value,
+         password: document.getElementById("password").value,
+
+     };
+
+     // Hacer el POST con fetch
+     fetch('/register', {
+         method: 'POST',
+         headers: {
+             'Content-Type': 'application/json'  // Necesario para enviar JSON
+         },
+         body: JSON.stringify(nuevoRegistro)  // Convertir el objeto a una cadena JSON
+     })
+     .then(response => console.log(response))  // Supongo que la respuesta es un JSON con el producto insertado
+  
+     .catch(error => console.error('Error al insertar el item: ', error));
+
+
+
+    }
+</script>
+</html>
