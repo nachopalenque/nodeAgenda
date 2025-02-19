@@ -192,8 +192,8 @@
                 <label for="descripcionTarea" class="form-label"><strong>Detalle del elemento :</strong></label><br>
                 <textarea class="form-control form-control-custom" id="descripcionTarea" rows="20" cols="100" placeholder="Introduzca detalles"></textarea>
             </div>
-            <button id="crearNota" class="btn btn-primary btn-custom">Añadir Nota</button>
             <button id="crearTarea" class="btn btn-success btn-custom">Añadir Tarea</button>
+            <button id="crearNota" class="btn btn-primary btn-custom">Añadir Nota</button>
         </form>
     </section>
 
@@ -206,7 +206,7 @@
                     <th hidden>ID</th>
                     <th>Nombre</th>
                     <th>Descripción</th>
-                    <th>Nota/Tarea</th>
+                    <th>Tarea/Nota</th>
                     <th>Terminada</th>
                     <th>Acción</th>
                 </tr>
@@ -228,7 +228,7 @@
                 <label for="descripcionTareaEditar" class="form-label"><strong>Detalle del elemento :</strong></label><br>
                 <textarea class="form-control form-control-custom" id="descripcionTareaEditar" rows="20" cols="100"></textarea>
             </div>
-            <button class="btn btn-primary btn-custom">Editar</button>
+            <button class="btn btn-primary btn-custom" id="editarTarea">Editar</button>
             <button id="terminarTarea" class="btn btn-warning btn-custom">Terminar Tarea</button>
             <button id="eliminarTarea" class="btn btn-danger btn-custom">Eliminar</button>
         </form>
@@ -245,6 +245,7 @@
 <script>
 
     let idTarea=0;
+    let tarea_nota = 0;
     let registros=0;
 
     window.addEventListener("load",()=>{
@@ -294,7 +295,7 @@
 
     document.getElementById("crearNota").addEventListener("click", ()=>{
         document.getElementById("volverTareas").hidden = false
-        crearElemento(0)
+        crearElemento(1)
         document.getElementById("formInsertaTarea").hidden=true;
         cargaElementos('/items')
         document.getElementById("tareas").hidden=false;
@@ -302,7 +303,7 @@
     })
 
     document.getElementById("crearTarea").addEventListener("click", ()=>{
-        crearElemento(1)
+        crearElemento(0)
         document.getElementById("formInsertaTarea").hidden=true;
         cargaElementos('/items')
         document.getElementById("tareas").hidden=false;
@@ -323,13 +324,24 @@
     })
 
 
+    document.getElementById("editarTarea").addEventListener("click",()=>{
+        actualizarElemento(idTarea,document.getElementById("nombreTareaEditar").value,document.getElementById("descripcionTareaEditar").value, tarea_nota, 0 )
+    })
 
-    function crearElemento(nota_tarea){
+
+    document.getElementById("terminarTarea").addEventListener("click",()=>{
+        actualizarElemento(idTarea,document.getElementById("nombreTareaEditar").value,document.getElementById("descripcionTareaEditar").value, tarea_nota, 1 )
+    })
+
+
+
+    function crearElemento(tarea_nota){
           // Crear el objeto con lterminar crud mongo tareas	os datos que quieres insertar
+          
      const nuevoItem = {
          nombre: document.getElementById("nombreTarea").value,
          descripcion: document.getElementById("descripcionTarea").value,
-         nota_tarea: parseInt(nota_tarea),
+         tarea_nota: parseInt(tarea_nota),
          terminada: 0
      };
 
@@ -378,7 +390,7 @@
             <td hidden>${tarea._id}</td>
             <td>${tarea.nombre}</td>
             <td>${tarea.descripcion}</td>
-            <td>${(tarea.tarea_nota)? "Nota":"Tarea"}</td>
+            <td>${(tarea.tarea_nota == 1)? "Nota":"Tarea"}</td>
             <td>${(tarea.terminada)? "Si":"No"}</td>`
                 
             }
@@ -393,14 +405,7 @@
                 verNotaTarea(tarea._id,tarea.nombre,tarea.descripcion,tarea.tarea_nota, tarea.terminada)
             })
 
-            if(tarea.nota_tarea == 1){
-                let botonCambiarEstado = document.createElement("button")
-                (tarea.terminada==1)? botonCambiarEstado.textContent = "Reanudar Tarea":botonCambiarEstado.textContent="Terminar Tarea"
-                tdBoton.appendChild(botonCambiarEstado)
-                botonCambiarEstado.addEventListener("click",()=>{
-                    
-                })
-            }
+
 
             tbody.appendChild(fila);
 
@@ -414,8 +419,9 @@
     .catch(error => console.error('Error: ',error))
 }
 
-    function verNotaTarea(id,nombre,descripcion, tarea_nota, terminada){
+    function verNotaTarea(id,nombre,descripcion, tarea_notaValor, terminada){
         idTarea = id;
+        tarea_nota = tarea_notaValor;
         document.getElementById("volverTareas").hidden = false;
         document.getElementById("buscarElementos").hidden=true;
         document.getElementById("tareas").hidden=true;
@@ -443,6 +449,34 @@
         })
 
     }
+    }
+
+    function actualizarElemento(id,nombre,descripcion, tarea_nota, terminada ){
+
+        fetch('/items/' + id,{
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type' : 'application/JSON'
+                    },
+                    body: JSON.stringify({nombre, descripcion, tarea_nota, terminada})
+                }).then(
+                    elemento=>{
+                        if ( elemento ) {
+                            alert("elemento ACTUALIZADO")
+                        } else {
+                            alert("No actualizo el elemento")
+                        }
+                    }
+
+                )
+                .catch(err=>{
+                    console.error(err);
+                })
+
+
+        
+
+
     }
 
 </script>

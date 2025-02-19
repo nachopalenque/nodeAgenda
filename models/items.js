@@ -86,7 +86,6 @@ const mongoose = require('mongoose');
              
               })
               .catch(err=>console.error('Error al obtener items',err));
-                throw err;
          }     
 
         const buscarTerminadas =(estadoTarea)=>{
@@ -103,7 +102,6 @@ const mongoose = require('mongoose');
                
                 })
                 .catch(err=>console.error('Error al obtener items',err));
-                  throw err;
            }
 
 
@@ -137,7 +135,6 @@ const actualizarEstadoTarea = (idItem, estadoTarea)=>{
     }
   })
   .catch(err => console.error('Error al actualizar el item:', err));
-     throw err;
 
 }
 
@@ -160,28 +157,24 @@ const actualizarNombreTarea = (idItem, nombreTarea)=>{
     }
   })
   .catch(err => console.error('Error al actualizar item:', err));
-    throw err;
 
 }       
 
-const actualizarDescripcionTarea = (idItem, descripcionTarea)=>{
-    //{new:true} para devolver el objeto actualizado
-   return Item.findByIdAndUpdate(idItem, { descripcion: descripcionTarea }, { new: true })
-  .then(itemResult => {
-    if (itemResult) {
+    
 
-      console.log('item actualizado:', itemResult);
-      return itemResult;
-
+const actualizarElemento = (id,elemento) => {
+  return Item.findByIdAndUpdate(id, elemento, { new: true })
+  .then(elementoActualizado => {
+    if (elementoActualizado) {
+      console.log('Ordenador actualizado:', elementoActualizado);
+      return elementoActualizado;
     } else {
-
-      console.log('No se encontró ningún item con ese ID.');
+      console.log('No se encontró ningún ordenador con ese ID.');
       return null;
     }
   })
-  .catch(err => console.error('Error al actualizar el item:', err));
-  throw err;
-}      
+  .catch(err => console.error('Error al actualizar el ordenador:', err));
+}
 
 
 
@@ -196,11 +189,11 @@ const borrarTarea = (idItemDelete)=>{
      return null
    }
  })
- .catch(err => console.error('Error al eliminar el item:', err))
- throw err;
+ .catch(err => console.error('Error al eliminar el item:', err)
+)
 
 }
 
 
 
-     module.exports = {crearNuevoItem,Item,buscarPrimero, buscarPorNombre, buscarTodos,buscarPorId, buscarTerminadas, actualizarNombreTarea,actualizarDescripcionTarea, actualizarEstadoTarea, borrarTarea}
+     module.exports = {crearNuevoItem,Item,buscarPrimero, buscarPorNombre, buscarTodos,buscarPorId, buscarTerminadas, actualizarElemento, borrarTarea}

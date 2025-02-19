@@ -90,14 +90,15 @@ app.post("/items", (req, res) => {
 
 // Actualizar un ítem existente
 app.put("/items/:id", (req, res) => {
-  const itemId = parseInt(req.params.id);
-  const itemIndex = items.findIndex((i) => i.id === itemId);
-  if (itemIndex !== -1) {
-    items[itemIndex].name = req.body.name;
-    res.json(items[itemIndex]);
-  } else {
-    res.status(404).json({ message: "Ítem no encontrado" });
-  }
+  const itemId = req.params.id;
+  item = req.body;
+  //res.send(ordenador);
+  moduloItems.actualizarElemento(itemId,item)
+  .then(
+    elementoAtualizado=>res.status(200).json(elementoAtualizado)
+  )
+  .catch(err=>res.status(500).send("error al actualizar el ordenador"))
+
 });
 
 
