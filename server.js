@@ -13,7 +13,7 @@ require('dotenv').config();
 mongoose.connect(process.env.Database_URL)
   .then(() => console.log('Connected!'));
 
-app.listen(3000)
+app.listen(3001)
 
 app.use(express.static('public'))
 
