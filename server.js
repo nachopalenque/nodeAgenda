@@ -1,9 +1,11 @@
 const express = require('express')
 const app = express()
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = 'diespleguedeaplicacioneswebnode2025';
+
 const moduloItems = require('./models/items');
-const moduloUsers = require('./models/User');
+const User = require('./models/User');
 
 const mongoose = require('mongoose');
 //Cargamos la configuracion establecida en el fichero oculto para las variables de entorno
@@ -13,46 +15,75 @@ require('dotenv').config();
 mongoose.connect(process.env.Database_URL)
   .then(() => console.log('Connected!'));
 
-app.listen(3001)
+app.listen(3000)
 
 app.use(express.static('public'))
 
 app.get('/', function (req, res) {
-  res.send('index')
+  res.send('login')
 })
 
 // Middleware para parsear el cuerpo de las solicitudes en formato JSON
 app.use(express.json());
 
 
-  // Registrar Usuario
-  app.post("/register", async (req, res) => {
-    try{
-      const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
-      moduloUsers.crearNuevoUsuario(req.body.name,req.body.email,hashedPassword);
-      res.send('index');
+//registro de usuario
+app.post('/registro', (req, res) => {
+  const { name, email, password } = req.body;
 
-    }catch(error){
+  // Encriptar contraseña
+  bcrypt.genSalt(10)
+    .then(salt => bcrypt.hash(password, salt))
+    .then(hashedPassword => {
+      // Crear usuario
+      const newUser = new User({
+        name,
+        email,
+        password: hashedPassword,
+      });
+
+
+      // Guardar usuario
+      return newUser.save();
+    })
+    .then(() => {
+      res.json({ message: 'Usuario registrado correctamente' });
+    })
+    .catch(error => {
       console.error(error);
-      res.status(500).send('Hubo un error al registrar el usuario');
-    }
-  });
-
-    // Registrar Usuario
-    app.post("/login", async (req, res) => {
-      try{
-
-        const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
-        moduloUsers.logIn(req.body.email,hashedPassword)
-        .then(item=>res.json(item))
-        .catch(err=>res.status(500).json({"error":err}))
-        res.status(200).send('Usuario logeado correctamente');
-  
-      }catch(error){
-        console.error(error);
-        res.status(500).send('Hubo un error al registrar el usuario');
-      }
+      res.status(500).json({ message: 'Error al registrar usuario' });
     });
+});
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+
+  // Buscar usuario
+  User.findOne({ email })
+    .then(user => {
+      if (!user) {
+        return res.status(400).json({ message: 'Credenciales inválidas' });
+      }
+
+
+      // Comparar contraseñas
+      return bcrypt.compare(password, user.password)
+        .then(isMatch => {
+          if (!isMatch) {
+            return res.status(400).json({ message: 'Credenciales inválidas' });
+          }
+
+          const token = jwt.sign({ id: user._id, username: user.name }, SECRET_KEY, { expiresIn: '2h' });
+
+          res.json({ token });
+        });
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).json({ message: 'Error al iniciar sesión' });
+    });
+});
 
 
 
