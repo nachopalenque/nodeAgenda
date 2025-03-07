@@ -16,23 +16,56 @@
         }
 
         header {
-            background-color: #111010;
+            background-color: #000000;
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             flex-direction: row;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: space-between;            
             color: white;
-            padding: 20px;
+            padding: 8px;
             margin-bottom: 30px;
         }
 
+        dialog{
+            background-color: white;
+            border-radius: 10px;
+            border: 1px solid #ced4da;
+            padding: 20px;
+        }
+        
+        #dialogBtn{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .dialog-error{
+            border: 1px solid #ff0000;
+        }
+
+        .dialog-error-mensaje{
+            text-align: center;
+            color: red;
+        }
+
+
+        .dialog-success{
+            border: 1px solid #2bff00;
+        }
 
 
         h1 {
             text-align: center;
-            font-size: 2rem;
+            font-size: 1.2em;
+            margin-left: 25%;
+            margin-right: 25%;
+
         }
         form{
             border-radius: 10px;
@@ -86,6 +119,10 @@
             font-size: 1rem;
             box-shadow: none;
         }
+        .form-control-text {
+            width: 600px;
+
+        }
 
         .form-control-custom:focus {
             border-color: #007bff;
@@ -101,6 +138,13 @@
             border-radius: 5px;
             padding: 10px 20px;
             font-size: 1.2rem;
+        }
+
+        .btn-table{
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin-top: 5px;
+            font-size: 1rem;
         }
 
         .btn-primary {
@@ -152,14 +196,9 @@
 </head>
 <body>
     <header>
-              <button type="button" class="btn btn-warning" id="btnCerrarSesion">Cerrar Sesión</button>
+        <h1>Una aplicación para realizar anotaciones y gestionar tus tareas</h1>
+         <button type="button" class="btn btn-warning" id="btnCerrarSesion">Cerrar Sesión</button>
       </header>
-<section>
-    <div class="container">
-        <h1 class="text-center">Agenda de Notas con Gestión de Tareas</h1>
-    </div>
-</section>
-
 <main class="container">
     <section id="principalTarea" class="mb-4">
         <div class="d-flex justify-content-between">
@@ -201,7 +240,7 @@
         <form>
             <div class="mb-3">
                 <label for="nombreTarea" class="form-label"><strong>Nombre del elemento :</strong></label><br>
-                <input type="text" class="form-control form-control-custom" id="nombreTarea" placeholder="Introduzca el nombre">
+                <input type="text" class="form-control form-control-custom  form-control-text"  id="nombreTarea" placeholder="Introduzca el nombre">
             </div>
             <div class="mb-3">
                 <label for="descripcionTarea" class="form-label"><strong>Detalle del elemento :</strong></label><br>
@@ -237,7 +276,7 @@
         <form>
             <div class="mb-3">
                 <label for="nombreTareaEditar" class="form-label"><strong>Nombre del elemento :</strong></label><br>
-                <input type="text" class="form-control form-control-custom" id="nombreTareaEditar">
+                <input type="text" class="form-control form-control-custom form-control-text" id="nombreTareaEditar">
             </div>
             <div class="mb-3">
                 <label for="descripcionTareaEditar" class="form-label"><strong>Detalle del elemento :</strong></label><br>
@@ -245,9 +284,18 @@
             </div>
             <button class="btn btn-primary btn-custom" id="editarTarea">Editar</button>
             <button id="terminarTarea" class="btn btn-warning btn-custom">Terminar Tarea</button>
-            <button id="eliminarTarea" class="btn btn-danger btn-custom">Eliminar</button>
         </form>
     </section>
+
+    <dialog id="dialog">
+        <section id="dialogMensaje">
+            <p id="dialogMensajeText"></p>
+        </section>
+        <section id="dialogBtn">
+            <button id="btnConfirm"></button>
+            <button id="btnCancel"></button>
+        </section>
+    </dialog>
 </main>
 
 <!-- Enlace a Bootstrap 5 JS -->
@@ -262,6 +310,12 @@
     let idTarea=0;
     let tarea_nota = 0;
     let registros=0;
+    let dialog = document.getElementById("dialog");
+    let mensajeDialog = document.getElementById("dialogMensaje");
+    let botonesDialog = document.getElementById("dialogBtn");
+    let btnConfirm = document.getElementById("btnConfirm")
+    let btnCancel = document.getElementById("btnCancel")
+    let mensajeDialogText = document.getElementById("dialogMensajeText")
 
     document.getElementById("btnCerrarSesion").addEventListener("click", ()=>{
         localStorage.removeItem("token")
@@ -353,12 +407,9 @@
 
     })
 
-    document.getElementById("eliminarTarea").addEventListener("click",  ()=>{
-        eliminarNotaTarea(idTarea);
-    })
-
 
     document.getElementById("editarTarea").addEventListener("click",()=>{
+
         actualizarElemento(idTarea,document.getElementById("nombreTareaEditar").value,document.getElementById("descripcionTareaEditar").value, tarea_nota, 0 )
     })
 
@@ -431,14 +482,32 @@
  
             let tdBoton = document.createElement("td")
             let botonVer= document.createElement("button")
-         
-            botonVer.textContent = "Ver Tarea"
+            let botonEliminar= document.createElement("button")
+
+            botonVer.className = "btn-table btn-warning"
+            botonVer.textContent = "Editar"
+            botonEliminar.className = "btn-table btn-danger"
+            botonEliminar.textContent = "Borrar"
             fila.appendChild(tdBoton)
             tdBoton.appendChild(botonVer)
+            tdBoton.appendChild(botonEliminar)
+
             botonVer.addEventListener("click",()=>{
                 verNotaTarea(tarea._id,tarea.nombre,tarea.descripcion,tarea.tarea_nota, tarea.terminada)
             })
 
+            botonEliminar.addEventListener("click",()=>{
+                idTarea = tarea._id
+                dialog.showModal();
+                dialog.className = "dialog dialog-error"
+                mensajeDialogText.className = "dialog-error-mensaje"
+                mensajeDialogText.innerHTML = "¿Esta seguro que quiere eliminar este elemento?"
+                btnConfirm.innerHTML = "Eliminar" 
+                btnConfirm.className = "btn-danger"
+                btnCancel.innerHTML = "Cancelar" 
+                btnCancel.className="btn-success"
+
+            })
 
 
             tbody.appendChild(fila);
@@ -467,11 +536,12 @@
     }
 
     function eliminarNotaTarea(id){
-        if(confirm("¿Esta seguro?")){
+
+
             fetch("/items/"+id,{
             method:"DELETE"
-        })
-        .then(response =>{
+            })
+             .then(response =>{
 
             if(response.ok){
                 alert("item eliminado")
@@ -482,8 +552,19 @@
         
         })
 
+
+
+
+
     }
-    }
+
+    btnConfirm.addEventListener("click",()=>{
+       
+        eliminarNotaTarea(idTarea)
+
+    })
+
+    btnCancel.addEventListener("click", ()=>{dialog.close()})
 
     function actualizarElemento(id,nombre,descripcion, tarea_nota, terminada ){
 
