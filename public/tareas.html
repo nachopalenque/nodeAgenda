@@ -68,9 +68,11 @@
 
         }
         form{
+          
             border-radius: 10px;
             border: 1px solid #ced4da;
             padding: 20px;
+            width: 80%;
         }
 
         .section-title {
@@ -120,7 +122,8 @@
             box-shadow: none;
         }
         .form-control-text {
-            width: 600px;
+            box-sizing: border-box;
+            width: 100%;
 
         }
 
@@ -244,7 +247,7 @@
             </div>
             <div class="mb-3">
                 <label for="descripcionTarea" class="form-label"><strong>Detalle del elemento :</strong></label><br>
-                <textarea class="form-control form-control-custom" id="descripcionTarea" rows="20" cols="100" placeholder="Introduzca detalles"></textarea>
+                <textarea class="form-control form-control-custom form-control-text" id="descripcionTarea" rows="20" cols="100" placeholder="Introduzca detalles"></textarea>
             </div>
             <button id="crearTarea" class="btn btn-success btn-custom">Añadir Tarea</button>
             <button id="crearNota" class="btn btn-primary btn-custom">Añadir Nota</button>
@@ -280,9 +283,9 @@
             </div>
             <div class="mb-3">
                 <label for="descripcionTareaEditar" class="form-label"><strong>Detalle del elemento :</strong></label><br>
-                <textarea class="form-control form-control-custom" id="descripcionTareaEditar" rows="20" cols="100"></textarea>
+                <textarea class="form-control form-control-custom form-control-text" id="descripcionTareaEditar" rows="20" cols="100"></textarea>
             </div>
-            <button class="btn btn-primary btn-custom" id="editarTarea">Editar</button>
+            <button class="btn btn-success btn-custom" id="editarTarea">Editar</button>
             <button id="terminarTarea" class="btn btn-warning btn-custom">Terminar Tarea</button>
         </form>
     </section>
@@ -316,6 +319,7 @@
     let btnConfirm = document.getElementById("btnConfirm")
     let btnCancel = document.getElementById("btnCancel")
     let mensajeDialogText = document.getElementById("dialogMensajeText")
+    let actualizacionTarea = false
 
     document.getElementById("btnCerrarSesion").addEventListener("click", ()=>{
         localStorage.removeItem("token")
@@ -410,7 +414,10 @@
 
     document.getElementById("editarTarea").addEventListener("click",()=>{
 
-        actualizarElemento(idTarea,document.getElementById("nombreTareaEditar").value,document.getElementById("descripcionTareaEditar").value, tarea_nota, 0 )
+       actualizarElemento(idTarea,document.getElementById("nombreTareaEditar").value,document.getElementById("descripcionTareaEditar").value, tarea_nota, 0 )
+
+           
+       
     })
 
 
@@ -494,11 +501,24 @@
 
             botonVer.addEventListener("click",()=>{
                 verNotaTarea(tarea._id,tarea.nombre,tarea.descripcion,tarea.tarea_nota, tarea.terminada)
+                if(actualizacionTarea){
+
+                            mensajeDialogText.innerHTML = ""
+                            btnConfirm.hidden = true
+                            dialog.showModal();
+                            dialog.className = "dialog dialog-success"
+                            mensajeDialogText.className = "dialog-success-mensaje"
+                            mensajeDialogText.innerHTML = "Se ha actualizado este elemento correctamente."
+                            btnCancel.innerHTML = "Aceptar" 
+                            btnCancel.className="btn-success"
+                            actualizacionTarea=false
+                }
             })
 
             botonEliminar.addEventListener("click",()=>{
                 idTarea = tarea._id
                 dialog.showModal();
+                btnConfirm.hidden = false
                 dialog.className = "dialog dialog-error"
                 mensajeDialogText.className = "dialog-error-mensaje"
                 mensajeDialogText.innerHTML = "¿Esta seguro que quiere eliminar este elemento?"
@@ -576,10 +596,13 @@
                     body: JSON.stringify({nombre, descripcion, tarea_nota, terminada})
                 }).then(
                     elemento=>{
-                        if ( elemento ) {
-                            alert("elemento ACTUALIZADO")
+                        if ( elemento.ok ) {
+
+                            actualizacionTarea = true
+
                         } else {
-                            alert("No actualizo el elemento")
+
+                            actualizacionTarea = false
                         }
                     }
 
