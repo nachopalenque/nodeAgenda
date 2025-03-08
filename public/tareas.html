@@ -486,6 +486,7 @@
             })
 
             botonEliminar.addEventListener("click",()=>{
+             
                 idTarea = tarea._id
                 dialog.showModal();
                 btnConfirm.hidden = false
@@ -496,6 +497,7 @@
                 btnConfirm.className = "btn-danger"
                 btnCancel.innerHTML = "Cancelar" 
                 btnCancel.className="btn-success"
+
 
             })
 
@@ -534,10 +536,9 @@
              .then(response =>{
 
             if(response.ok){
-                alert("item eliminado")
-                document.getElementById(id).remove
+
+
             }else{
-                alert("error al eliminar")
             }
         
         })
@@ -551,6 +552,8 @@
     btnConfirm.addEventListener("click",()=>{
        
         eliminarNotaTarea(idTarea)
+        dialog.close()
+        cargaElementos('/items')
 
     })
 
