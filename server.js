@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'diespleguedeaplicacioneswebnode2025';
 
-const moduloItems = require('./models/items');
+const moduloItems = require('./models/Items');
 const User = require('./models/User');
 
 const mongoose = require('mongoose');
