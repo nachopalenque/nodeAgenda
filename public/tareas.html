@@ -207,7 +207,6 @@
         <div class="d-flex justify-content-between">
             <button id="nuevoElemento" class="btn btn-success btn-custom">Nuevo elemento</button>
             <button id="buscarElementos" class="btn btn-primary btn-custom">Buscar elementos</button>
-            <button id="filtrarElementos" class="btn btn-primary btn-custom">Filtrar elementos</button>
             <button id="volverTareas" class="btn btn-danger btn-custom" hidden>Volver a la lista</button>
         </div>
     </section>
@@ -219,24 +218,7 @@
 
     </section>
 
-    <section id="filtrosTarea" hidden class="mb-4" >
-        <h4 class="section-title">Filtrar Tareas</h4>
-        <div class="form-check">
-            <input type="radio" class="form-check-input" name="tipo" id="tipoTareas" value="tareas">
-            <label class="form-check-label" for="tipoTareas">Tareas</label>
-        </div>
-        <div class="form-check">
-            <input type="radio" class="form-check-input" name="tipo" id="tipoNotas" value="notas">
-            <label class="form-check-label" for="tipoNotas">Notas</label>
-        </div>
-        <div class="form-check">
-            <input type="radio" class="form-check-input" name="tipo" id="tipoTodas" value="todas">
-            <label class="form-check-label" for="tipoTodas">Todas</label>
-        </div>
-
-        <button class="btn btn-success btn-custom mt-3">Aplicar Filtros</button>
-
-    </section>
+ 
 
     <section id="formInsertaTarea" hidden="true" class="mb-4">
         <h4 class="section-title">Dar de alta nuevo elemento</h4>
@@ -360,7 +342,6 @@
 
     document.getElementById("buscarElementos").addEventListener("click",()=>{
         if (document.getElementById("buscarTareas").hidden==true){
-        document.getElementById("filtrosTarea").hidden=true;
         document.getElementById("volverTareas").hidden = true
         document.getElementById("buscarTareas").hidden=false;
         document.getElementById("tareas").hidden=false;
@@ -372,18 +353,6 @@
 
     })
 
-    document.getElementById("filtrarElementos").addEventListener("click",()=>{
-        if (document.getElementById("filtrosTarea").hidden==true){
-        document.getElementById("filtrosTarea").hidden = false
-        document.getElementById("buscarTareas").hidden=true;
-        document.getElementById("tareas").hidden=false;
-        document.getElementById("formInsertaTarea").hidden=true;
-        }
-        else{
-            document.getElementById("filtrosTarea").hidden=true;
-        }
-
-    })
 
     document.getElementById("crearNota").addEventListener("click", ()=>{
         document.getElementById("volverTareas").hidden = false
